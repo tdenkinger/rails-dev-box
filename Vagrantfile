@@ -1,8 +1,8 @@
 Vagrant.configure('2') do |config|
   config.vm.box      = 'precise32'
   config.vm.box_url  = 'http://files.vagrantup.com/precise32.box'
-  config.vm.hostname = 'rails-dev-box'
-  # config.vm.synced_folder = "railsbridge/", "~/railsbridge"
+  config.vm.hostname = 'railsbridge-dev'
+  config.vm.synced_folder "railsbridge/", "/home/vagrant/railsbridge", :create => true
 
   config.vm.network :forwarded_port, guest: 3000, host: 3000
 
