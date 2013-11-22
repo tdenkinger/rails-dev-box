@@ -1,4 +1,3 @@
-$ar_databases = ['activerecord_unittest', 'activerecord_unittest2']
 $as_vagrant   = 'sudo -u vagrant -H bash -l -c'
 $home         = '/home/vagrant'
 
@@ -83,5 +82,7 @@ exec { 'install_heroku':
   command => "${as_vagrant} 'wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh'"
 }
 
-
+#exec { 'generate_ssh_keys':
+#  command => "${as_vagrant} 'ssh-keygen -q -t rsa -f ${home}/.ssh/id_rsa -N'"
+#}
 
