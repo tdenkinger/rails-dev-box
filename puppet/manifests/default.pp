@@ -27,77 +27,7 @@ package { ['sqlite3', 'libsqlite3-dev']:
   ensure => installed;
 }
 
-# --- MySQL --------------------------------------------------------------------
-
-class install_mysql {
-  class { 'mysql': }
-
-  class { 'mysql::server':
-    config_hash => { 'root_password' => '' }
-  }
-
-  database { $ar_databases:
-    ensure  => present,
-    charset => 'utf8',
-    require => Class['mysql::server']
-  }
-
-  database_user { 'rails@localhost':
-    ensure  => present,
-    require => Class['mysql::server']
-  }
-
-  database_grant { ['rails@localhost/activerecord_unittest', 'rails@localhost/activerecord_unittest2']:
-    privileges => ['all'],
-    require    => Database_user['rails@localhost']
-  }
-
-  package { 'libmysqlclient15-dev':
-    ensure => installed
-  }
-}
-class { 'install_mysql': }
-
-# --- PostgreSQL ---------------------------------------------------------------
-
-class install_postgres {
-  class { 'postgresql': }
-
-  class { 'postgresql::server': }
-
-  pg_database { $ar_databases:
-    ensure   => present,
-    encoding => 'UTF8',
-    require  => Class['postgresql::server']
-  }
-
-  pg_user { 'rails':
-    ensure  => present,
-    require => Class['postgresql::server']
-  }
-
-  pg_user { 'vagrant':
-    ensure    => present,
-    superuser => true,
-    require   => Class['postgresql::server']
-  }
-
-  package { 'libpq-dev':
-    ensure => installed
-  }
-
-  package { 'postgresql-contrib':
-    ensure  => installed,
-    require => Class['postgresql::server'],
-  }
-}
-class { 'install_postgres': }
-
-# --- Memcached ----------------------------------------------------------------
-
-class { 'memcached': }
-
-# --- Packages -----------------------------------------------------------------
+# --- Utilities
 
 package { 'curl':
   ensure => installed
@@ -144,3 +74,14 @@ exec { "${as_vagrant} 'gem install bundler --no-rdoc --no-ri'":
   creates => "${home}/.rvm/bin/bundle",
   require => Exec['install_ruby']
 }
+
+exec { "${as_vagrant} 'gem install rails --no-rdoc --no-ri'":
+  require => Exec['install_ruby']
+}
+
+exec { 'install_heroku':
+  command => "${as_vagrant} 'wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh'"
+}
+
+
+
